@@ -19,17 +19,16 @@ _DOC_ONLY_KEYWORDS = (
 
 def web_search(query: str, api_key: str = "", max_results: int = 5) -> list[dict]:
     try:
-        from duckduckgo_search import DDGS
-        results: list[dict] = []
-        with DDGS() as ddgs:
-            for r in ddgs.text(query, max_results=max_results):
-                results.append(
-                    {
-                        "title": r.get("title", "") or query,
-                        "link": r.get("href", ""),
-                        "snippet": r.get("body", ""),
-                    }
-                )
+        from ddgs import DDGS
+        raw = DDGS().text(query, max_results=max_results)
+        results: list[dict] = [
+            {
+                "title": r.get("title", "") or query,
+                "link": r.get("href", ""),
+                "snippet": r.get("body", ""),
+            }
+            for r in (raw or [])
+        ]
 
         if not results:
             fallback_link = f"https://duckduckgo.com/?q={query.replace(' ', '+')}"

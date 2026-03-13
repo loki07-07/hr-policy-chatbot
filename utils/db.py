@@ -1,6 +1,7 @@
 """Simple SQLite-backed user store for signup / login."""
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import sqlite3
 from pathlib import Path
@@ -10,8 +11,13 @@ from typing import Optional, Dict, Any
 DB_PATH = Path(__file__).resolve().parent.parent / "users.db"
 
 
-def _get_connection() -> sqlite3.Connection:
-    return sqlite3.connect(DB_PATH)
+@contextlib.contextmanager
+def _get_connection():
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 def init_db() -> None:

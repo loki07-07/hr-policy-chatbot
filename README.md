@@ -125,14 +125,16 @@ Web search uses DuckDuckGo and does **not** require an API key. Optional: `OPENA
 
 1. Push the repo to a **public GitHub** repository.
 2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** → select repo, branch, and `app.py` as main file.
-3. In **Settings → Secrets**, add:
+3. In **Settings → Secrets**, paste your keys in **TOML format** (this info is encrypted and passed to the app at runtime). Example:
 
 ```toml
 GROQ_API_KEY = "gsk_..."
-# Optional:
-OPENAI_API_KEY = "sk-..."
-GEMINI_API_KEY = "..."
+# Optional (only if you use OpenAI or Gemini in the sidebar):
+# OPENAI_API_KEY = "sk-..."
+# GEMINI_API_KEY = "..."
 ```
+
+   See [Streamlit Secrets docs](https://docs.streamlit.io/streamlit-community-cloud/deploy-your-app/secrets-management). Changes take around a minute to propagate.
 
 4. **Deploy**. The app will build and run.
 
@@ -141,7 +143,8 @@ GEMINI_API_KEY = "..."
 - **Startup time**: First load can take 30–60 s while the embedding model (`sentence-transformers/all-MiniLM-L6-v2`) and dependencies download. Subsequent reruns are faster.
 - **Memory**: Embedding model + Streamlit + LLM calls typically need ~1–2 GB. Free tier is usually sufficient for demo use.
 - **Secrets**: Never commit API keys. Use Streamlit Cloud Secrets or environment variables only.
-- **Requirements**: `requirements.txt` must list all dependencies (streamlit, groq, sentence-transformers, PyMuPDF, duckduckgo-search, etc.). Web search uses DuckDuckGo (no API key).
+- **Requirements**: `requirements.txt` must list all dependencies (streamlit, groq, sentence-transformers, PyMuPDF, ddgs, etc.). Web search uses the `ddgs` package (no API key).
+- **Groq "Connection error" on Streamlit Cloud**: If you see this, the key is usually correct but the cloud runtime may have brief network issues or restrictions. Try reloading after a minute; if it persists, check [Groq status](https://status.groq.com/) or run the app locally to confirm the key works.
 
 ### Getting API keys
 

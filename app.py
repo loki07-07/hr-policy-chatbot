@@ -56,7 +56,22 @@ _LLM_MODELS = {
     "OpenAI": ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
     "Gemini": ["gemini-1.5-flash", "gemini-1.5-pro"],
 }
-_LLM_KEYS = {"Groq": GROQ_API_KEY, "OpenAI": OPENAI_API_KEY, "Gemini": GEMINI_API_KEY}
+
+
+def _api_key(secret_key: str, env_value: str) -> str:
+    """Use Streamlit Secrets (e.g. on Streamlit Cloud) if set, else env."""
+    try:
+        v = getattr(st.secrets, secret_key, None) or env_value
+        return (v or env_value) if isinstance(v, str) else env_value
+    except Exception:
+        return env_value
+
+
+_LLM_KEYS = {
+    "Groq": _api_key("GROQ_API_KEY", GROQ_API_KEY),
+    "OpenAI": _api_key("OPENAI_API_KEY", OPENAI_API_KEY),
+    "Gemini": _api_key("GEMINI_API_KEY", GEMINI_API_KEY),
+}
 
 
 @st.cache_resource(show_spinner=False)
